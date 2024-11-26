@@ -1,8 +1,14 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
+
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(rootProject.file(".keystore")))
 
 android {
     namespace = "com.jx.workflow"
@@ -16,13 +22,15 @@ android {
         versionName = "0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "TEST_VARIABLE", keystoreProperties["testVariable"] as String)
     }
     signingConfigs {
         create("release") {
             storeFile = file("../release.jks")
-            keyAlias = "release"
-            keyPassword = "release"
-            storePassword = "release"
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storePassword = keystoreProperties["storePassword"] as String
         }
         getByName("debug") {
             storeFile = file("../debug.jks")
@@ -62,6 +70,7 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }
