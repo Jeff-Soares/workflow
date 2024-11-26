@@ -6,30 +6,60 @@ plugins {
 
 android {
     namespace = "com.jx.workflow"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.jx.workflow"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    signingConfigs {
+        create("release") {
+            storeFile = file("../release.jks")
+            keyAlias = "release"
+            keyPassword = "release"
+            storePassword = "release"
+        }
+        getByName("debug") {
+            storeFile = file("../debug.jks")
+            keyAlias = "debug"
+            keyPassword = "debugkey"
+            storePassword = "debugkey"
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
+            isDebuggable = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        debug {
+            versionNameSuffix = "-debug"
+            signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+    flavorDimensions.add("environment")
+    productFlavors {
+        create("production") {
+            resValue("string", "app_name", "Workflow")
+        }
+        create("staging") {
+            resValue("string", "app_name", "Workflow STG")
+            applicationIdSuffix = ".stg"
+            versionNameSuffix = "-stg"
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
