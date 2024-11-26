@@ -20,5 +20,4 @@ jobs:
           distribution: "zulu"
 
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest
-
+        run: chmod +x gradlew && ./gradlew testDebugUnitTest
