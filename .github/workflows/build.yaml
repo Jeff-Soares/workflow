@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  build:
+  unit-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -22,4 +22,12 @@ jobs:
       - name: Run unit tests
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
-        run: chmod +x gradlew && ./gradlew testDebugUnitTest
+        run: chmod +x gradlew && ./gradlew app:testStagingDebugUnitTest
+
+      - name: Upload test reports
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: app/build/reports/tests/testStagingDebugUnitTest
