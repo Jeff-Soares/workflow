@@ -25,7 +25,9 @@ jobs:
       - name: Run unit tests
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
-        run: chmod +x gradlew && ./gradlew app:testStagingDebugUnitTest
+        run: |
+          chmod +x gradlew
+          ./gradlew app:lintStagingDebug app:testStagingDebugUnitTest
 
       - name: Upload test reports
         if: always()
@@ -33,4 +35,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
-          path: app/build/reports/tests/testStagingDebugUnitTest
+          path: |
+            app/build/reports/tests/testStagingDebugUnitTest
+            app/build/reports/lint-results-stagingDebug.*
