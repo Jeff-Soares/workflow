@@ -20,4 +20,6 @@ jobs:
           distribution: "zulu"
 
       - name: Run unit tests
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
         run: chmod +x gradlew && ./gradlew testDebugUnitTest

@@ -8,7 +8,7 @@ plugins {
 }
 
 val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream(rootProject.file(".keystore")))
+keystoreProperties.load(System.getenv("KEYSTORE")?.byteInputStream() ?: FileInputStream(rootProject.file(".keystore")))
 
 android {
     namespace = "com.jx.workflow"
