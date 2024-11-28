@@ -1,4 +1,4 @@
-name: Android Build
+name: Pull Request - Tests
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -24,15 +24,17 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          log-accepted-android-sdk-licenses: false
 
-      - name: Run unit tests
+      - name: Run lint check and unit tests
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
         run: |
           chmod +x gradlew
-          ./gradlew app:lintStagingDebug app:testStagingDebugUnitTest
+          ./gradlew clean app:lintStagingDebug app:testStagingDebugUnitTest
 
-      - name: Upload test reports
+      - name: Upload reports
         if: always()
         continue-on-error: true # for local tests
         uses: actions/upload-artifact@v4
