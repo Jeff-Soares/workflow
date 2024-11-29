@@ -41,3 +41,8 @@ jobs:
           git tag -f -a $TAG -m "$TAG"
           git push origin master
           git push origin $TAG
+
+      - name: Create new release
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: gh release create "$TAG" --title="$TAG" --generate-notes
