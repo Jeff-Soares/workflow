@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.release.head.ref }}
+          ref: master
 
       - name: Bump version
         run: |
@@ -24,7 +24,7 @@ jobs:
           NEW_VERSION_NAME=${TAG//v}
 
           sed -i "s/versionCode = .*/versionCode = $NEW_VERSION_CODE/" $VERSION_FILE
-          sed -i "s/versionName = \".*\"/versionName = \"NEW_VERSION_NAME\"/" $VERSION_FILE 
+          sed -i "s/versionName = \".*\"/versionName = \"$NEW_VERSION_NAME\"/" $VERSION_FILE 
 
           echo "NEW_VERSION_CODE=$NEW_VERSION_CODE" >> $GITHUB_ENV
           echo "NEW_VERSION_NAME=$NEW_VERSION_NAME" >> $GITHUB_ENV
