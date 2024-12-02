@@ -2,6 +2,11 @@ name: Bump version
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: new app version
+        required: true
+        type: string
 
 jobs:
   bump-version:
@@ -13,36 +18,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: master
+          ref: main
 
-      - name: Bump version
-        run: |
-          VERSION_FILE="app/build.gradle.kts"
-          VERSION_CODE=$(grep "versionCode" $VERSION_FILE | awk -F'=' '{print $2}' | tr -d -c '0-9')
-          NEW_VERSION_CODE=$((VERSION_CODE + 1))
-          TAG=${{ github.event.release.tag_name }}
-          NEW_VERSION_NAME=${TAG//v}
-
-          sed -i "s/versionCode = .*/versionCode = $NEW_VERSION_CODE/" $VERSION_FILE
-          sed -i "s/versionName = \".*\"/versionName = \"$NEW_VERSION_NAME\"/" $VERSION_FILE 
-
-          echo "NEW_VERSION_CODE=$NEW_VERSION_CODE" >> $GITHUB_ENV
-          echo "NEW_VERSION_NAME=$NEW_VERSION_NAME" >> $GITHUB_ENV
-
-      - name: Set up Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Commit new version
-        run: |
-          TAG=${{ github.event.release.tag_name }}
-          git commit -a -m "Versao $TAG"
-          git tag -f -a $TAG -m "$TAG"
-          git push origin master
-          git push origin $TAG
+      - name: Bump app version
+        uses: ./.github/actions/android-version-bump
+        with:
+          version: ${{ inputs.tag }}
 
       - name: Create new release
-        env:
-          TAG: ${{ github.event.release.tag_name }}
-        run: gh release create "$TAG" --title="$TAG" --generate-notes
+        run: gh release create ${{ inputs.tag }} --title=${{ inputs.tag }} --generate-notes

@@ -1,0 +1,41 @@
+name: Android version bump
+description: Overrides versionCode and versionName in build.gradle.kts
+
+inputs:
+  version:
+    description: new app version
+    required: true
+  
+
+runs:
+  using: composite
+  steps:
+    - name: Edit build.gradle.kts
+      run: |
+        GRADLE_FILE="app/build.gradle.kts"
+        VERSION_CODE=$(grep "versionCode" $GRADLE_FILE | awk -F'=' '{print $2}' | tr -d -c '0-9')
+        NEW_VERSION_CODE=$((VERSION_CODE + 1))
+        TAG=${{ inputs.tag }}
+        NEW_VERSION_NAME=${TAG//v}
+
+        sed -i "s/versionCode = .*/versionCode = $NEW_VERSION_CODE/" $GRADLE_FILE
+        sed -i "s/versionName = \".*\"/versionName = \"$NEW_VERSION_NAME\"/" $GRADLE_FILE 
+
+        echo "NEW_VERSION_CODE=$NEW_VERSION_CODE" >> $GITHUB_ENV
+        echo "NEW_VERSION_NAME=$NEW_VERSION_NAME" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Set up Git
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+      shell: bash
+
+    - name: Commit changes
+      run: |
+        TAG=${{ inputs.tag }}
+        git commit -a -m "Versao $TAG"
+        git push origin main
+        git tag $TAG
+        git push origin $TAG
+      shell: bash
