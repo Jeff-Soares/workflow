@@ -1,4 +1,4 @@
-name: Bump version
+name: Create new release
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
         type: string
 
 jobs:
-  bump-version:
+  create-release:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -25,5 +25,5 @@ jobs:
         with:
           version: ${{ inputs.tag }}
 
-      - name: Create new release
+      - name: Create release
         run: gh release create ${{ inputs.tag }} --title=${{ inputs.tag }} --generate-notes
