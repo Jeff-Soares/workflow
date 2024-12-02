@@ -1,52 +1,52 @@
-name: Setup android SDK
-if: ${{ $ANDROID_SDK_ROOT != '' }}
+name: Setup Android SDK
+description: Sets up the Android SDK and ANDROID_HOME env variable
+
 runs:
   using: composite
+  steps:
+    - name: Download cmdline tools
+      run: |
+        mkdir -p $HOME/android-sdk
+        wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
+        cp ./commandlinetools-linux-11076708_latest.zip $HOME/android-sdk
+        cd $HOME/android-sdk
+        unzip commandlinetools-linux-11076708_latest.zip
+        mkdir tools
+        cd cmdline-tools/
+        mv -i * ../tools && mv ../tools .
+        cd ..
+        echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+      shell: bash
 
-steps:
-  - name: Download cmdline tools
-    run: |
-      mkdir -p $HOME/android-sdk
-      wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
-      cp ./commandlinetools-linux-11076708_latest.zip $HOME/android-sdk
-      cd $HOME/android-sdk
-      unzip commandlinetools-linux-11076708_latest.zip
-      mkdir tools
-      cd cmdline-tools/
-      mv -i * ../tools && mv ../tools .
-      cd ..
-      echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-    shell: bash
+    - name: Verify updated ANDROID_HOME
+      run: |
+        echo "Using updated Android SDK home: $ANDROID_HOME"
+      shell: bash
 
-  - name: Verify updated ANDROID_HOME
-    run: |
-      echo "Using updated Android SDK home: $ANDROID_HOME"
-    shell: bash
+    - name: Accept SDK licenses
+      run: |
+        # For some reason, sdkmanager returns an error code when licenses are accepted. Run in a
+        # sub-shell so that the CI workflow doesn't fail.
+        echo $(yes | $ANDROID_HOME/cmdline-tools/tools/bin/sdkmanager --licenses)
+      shell: bash
 
-  - name: Accept SDK licenses
-    run: |
-      # For some reason, sdkmanager returns an error code when licenses are accepted. Run in a
-      # sub-shell so that the CI workflow doesn't fail.
-      echo $(yes | $ANDROID_HOME/cmdline-tools/tools/bin/sdkmanager --licenses)
-    shell: bash
+    - name: Install platform tools
+      run: |
+        $ANDROID_HOME/cmdline-tools/tools/bin/sdkmanager --install "platform-tools"
+      shell: bash
 
-  - name: Install platform tools
-    run: |
-      $ANDROID_HOME/cmdline-tools/tools/bin/sdkmanager --install "platform-tools"
-    shell: bash
+    - name: Install SDK 33
+      run: |
+        $ANDROID_HOME/cmdline-tools/tools/bin/sdkmanager --install "platforms;android-33"
+      shell: bash
 
-  - name: Install SDK 33
-    run: |
-      $ANDROID_HOME/cmdline-tools/tools/bin/sdkmanager --install "platforms;android-33"
-    shell: bash
+    - name: Install build tools 32.0.0
+      run: |
+        $ANDROID_HOME/cmdline-tools/tools/bin/sdkmanager --install "build-tools;32.0.0"
+      shell: bash
 
-  - name: Install build tools 32.0.0
-    run: |
-      $ANDROID_HOME/cmdline-tools/tools/bin/sdkmanager --install "build-tools;32.0.0"
-    shell: bash
-
-  - name: Configure Bazel to use specific sandbox tmpfs
-    run: |
-      echo "build --enable_platform_specific_config" >> $HOME/.bazelrc
-      echo "build:linux --sandbox_tmpfs_path=/tmp" >> $HOME/.bazelrc
-    shell: bash
+    - name: Configure Bazel to use specific sandbox tmpfs
+      run: |
+        echo "build --enable_platform_specific_config" >> $HOME/.bazelrc
+        echo "build:linux --sandbox_tmpfs_path=/tmp" >> $HOME/.bazelrc
+      shell: bash
