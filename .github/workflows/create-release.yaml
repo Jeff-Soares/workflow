@@ -20,6 +20,25 @@ jobs:
           fetch-depth: 0
           ref: main
 
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "zulu"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          log-accepted-android-sdk-licenses: false
+
+      - name: Run unit tests
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+        run: chmod +x gradlew &&./gradlew clean app:testProductionDebugUnitTest
+
       - name: Bump app version
         uses: ./.github/actions/android-version-bump
         with:
