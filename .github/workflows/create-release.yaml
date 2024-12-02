@@ -44,5 +44,16 @@ jobs:
         with:
           version: ${{ inputs.tag }}
 
+      - name: Build Android App Bundle
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+        run: ./gradlew app:assembleRelease
+
       - name: Create release
         run: gh release create ${{ inputs.tag }} --title=${{ inputs.tag }} --generate-notes
+
+      - name: Upload release assets
+        run: |
+          gh release upload ${{ inputs.tag }} \
+            app/build/outputs/apk/production/release/app-production-release.apk \
+            app/build/outputs/apk/staging/release/app-staging-release.apk
