@@ -23,9 +23,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          log-accepted-android-sdk-licenses: false
+        uses: ./.github/actions/setup-android-sdk
 
       - name: Run lint check and unit tests
         env:
