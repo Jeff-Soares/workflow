@@ -23,6 +23,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Setup Android SDK
+        if: ${{ env.ANDROID_HOME == '' }}
         uses: ./.github/actions/setup-android-sdk
 
       - name: Run lint check and unit tests
