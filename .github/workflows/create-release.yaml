@@ -20,19 +20,8 @@ jobs:
           fetch-depth: 0
           ref: main
 
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: "17"
-          distribution: "zulu"
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          log-accepted-android-sdk-licenses: false
+      - name: Setup Android Environment
+        uses: ./.github/actions/setup-android
 
       - name: Run unit tests
         env:
