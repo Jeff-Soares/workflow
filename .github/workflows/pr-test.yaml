@@ -13,18 +13,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: "17"
-          distribution: "zulu"
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Setup Android SDK
-        if: ${{ env.ANDROID_HOME == '' }}
-        uses: ./.github/actions/setup-android-sdk
+      - name: Setup Android Environment
+        uses: ./.github/actions/setup-android
 
       - name: Run lint check and unit tests
         env:
