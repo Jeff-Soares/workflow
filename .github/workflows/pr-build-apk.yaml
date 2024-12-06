@@ -1,0 +1,30 @@
+name: Pull Request - Build APK
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.label.name == 'Status - Ready 4 test' }}
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Android Environment
+        uses: ./.github/actions/setup-android
+
+      - name: Build
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+        run: chmod +x gradlew && ./gradlew clean app:assembleStagingRelease
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-staging-release
+          path: app/build/outputs/apk/staging/release/app-staging-release.apk
