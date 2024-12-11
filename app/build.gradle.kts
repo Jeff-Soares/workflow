@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.api.ApkVariantOutputImpl
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -60,6 +61,13 @@ android {
             resValue("string", "app_name", "Workflow STG")
             applicationIdSuffix = ".stg"
             versionNameSuffix = "-stg"
+        }
+    }
+    applicationVariants.all {
+        val suffix = System.getenv("VERSION_SUFFIX")?.let { "-$it" } ?: ""
+        outputs.forEach { output ->
+            val newVersionCode = versionName + suffix
+            (output as ApkVariantOutputImpl).versionNameOverride = newVersionCode
         }
     }
     compileOptions {

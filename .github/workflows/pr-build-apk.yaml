@@ -17,14 +17,15 @@ jobs:
       - name: Setup Android Environment
         uses: ./.github/actions/setup-android
 
-      - name: Build
+      - name: Build APK - STG
         env:
+          VERSION_SUFFIX: ${{ format('PR{0}', github.event.pull_request.number) }}
           KEYSTORE: ${{ secrets.KEYSTORE }}
-        run: ./gradlew clean app:assembleStagingRelease
+        run: ./gradlew clean app:assembleStagingDebug
 
       - name: Upload artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: app-staging-release
-          path: app/build/outputs/apk/staging/release/app-staging-release.apk
+          name: app-staging-debug
+          path: app/build/outputs/apk/staging/debug/app-staging-debug.apk
