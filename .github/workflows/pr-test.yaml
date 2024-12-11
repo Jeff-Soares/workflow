@@ -19,9 +19,7 @@ jobs:
       - name: Run lint check and unit tests
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
-        run: |
-          chmod +x gradlew
-          ./gradlew clean app:lintStagingDebug app:testStagingDebugUnitTest
+        run: ./gradlew clean app:lintStagingDebug app:testStagingDebugUnitTest
 
       - name: Upload reports
         if: always()

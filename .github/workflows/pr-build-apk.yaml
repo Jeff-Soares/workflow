@@ -20,7 +20,7 @@ jobs:
       - name: Build
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
-        run: chmod +x gradlew && ./gradlew clean app:assembleStagingRelease
+        run: ./gradlew clean app:assembleStagingRelease
 
       - name: Upload artifact
         if: always()

@@ -26,7 +26,7 @@ jobs:
       - name: Run unit tests
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
-        run: chmod +x gradlew &&./gradlew clean app:testProductionDebugUnitTest
+        run: ./gradlew clean app:testProductionDebugUnitTest
 
       - name: Bump app version
         uses: ./.github/actions/android-version-bump
