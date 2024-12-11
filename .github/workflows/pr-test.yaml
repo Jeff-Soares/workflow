@@ -1,4 +1,4 @@
-name: Pull Request - Unit Tests
+name: Pull Request - Tests
 
 on:
   pull_request:
@@ -16,14 +16,13 @@ jobs:
       - name: Setup Android Environment
         uses: ./.github/actions/setup-android
 
-      - name: Run lint check and unit tests
+      - name: Run lint checks and unit tests
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
         run: ./gradlew clean app:lintStagingDebug app:testStagingDebugUnitTest
 
       - name: Upload reports
         if: always()
-        continue-on-error: true # for local tests
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
