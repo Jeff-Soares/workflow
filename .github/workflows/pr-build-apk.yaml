@@ -33,3 +33,27 @@ jobs:
         with:
           name: app-staging-debug
           path: app/build/outputs/apk/staging/debug/app-staging-debug.apk
+
+  deploy-firebase:
+    runs-on: ubuntu-latest
+    needs: build
+    env: 
+      GOOGLE_APPLICATION_CREDENTIALS: firebase_credential.json
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-staging-debug
+
+      - name: Setup firebase credentials
+        run: ${{ secrets.FIREBASE_CREDENTIALS }} > $GOOGLE_APPLICATION_CREDENTIALS
+
+      - name: Install firebase CLI
+        run: curl -sL https://firebase.tools | bash
+
+      - name: Upload to firebase app distribution
+        run: |
+          firebase appdistribution:distribute app-staging-debug.apk \
+            --app ${FIREBASE_APP_ID} \
+            --groups "dev, qa"
