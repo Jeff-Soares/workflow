@@ -1,0 +1,41 @@
+name: Upload to AWS S3
+description: Uploads a file to AWS S3 Bucket
+
+inputs:
+  bucket:
+    description: The Bucket name
+    required: true
+  key:
+    description: The object key (or key name) uniquely identifies the object in an Amazon S3 bucket
+    required: true
+  path:
+    description: Path to a file
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup AWS CLI
+      run: |
+        if ! [ -x "$(command -v aws)" ]; then
+          apt update -y && apt upgrade -y
+          apt install awscli -y
+        fi
+      shell: bash
+
+    - name: Upload to S3 Bucket
+      run: |
+        aws s3api put-object \
+          --bucket ${{ inputs.bucket }} \
+          --key ${{ inputs.key }} \
+          --body ${{ inputs.path }}
+      shell: bash
+
+    - name: APK download link
+      env:
+        AWS_URL: "https://${{ inputs.bucket }}.s3.sa-east-1.amazonaws.com"
+      run: |
+        APK_URL="$AWS_URL/${{ inputs.key }}"
+        echo "apk-url=$APK_URL" >> $GITHUB_OUTPUT
+        echo "$APK_URL" >> $GITHUB_STEP_SUMMARY
+      shell: bash
