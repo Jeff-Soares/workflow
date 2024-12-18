@@ -1,0 +1,46 @@
+name: Publish app to GooglePlay
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check version
+        if: ${{ github.event.release.tag_name != '' }}
+        run: |
+          TAG=${{ github.event.release.tag_name }}
+          VERSION_NAME=$(grep "versionName =" app/build.gradle.kts | awk -F'=' '{print $2}' | tr -d -c '0-9.')
+          if [ "${TAG//v}" != "$VERSION_NAME" ]; then
+              echo "Fail: app versionName ($VERSION_NAME) and release tag ($TAG) are different"
+              exit 1
+          fi
+
+      - name: Setup Android Environment
+        uses: ./.github/actions/setup-android
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Install fastlane
+        run: bundle install
+
+      - name: Create service account file
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+        run: echo "$GOOGLE_PLAY_SERVICE_ACCOUNT" > service_account.json
+
+      - name: Build and publish to closed test track
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+        run: bundle exec fastlane deploy_closed
