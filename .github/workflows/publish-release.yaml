@@ -19,6 +19,7 @@ jobs:
         run: |
           TAG=${{ github.event.release.tag_name }}
           VERSION_NAME=$(grep "versionName =" app/build.gradle.kts | awk -F'=' '{print $2}' | tr -d -c '0-9.')
+
           if [ "${TAG//v}" != "$VERSION_NAME" ]; then
               echo "Fail: app versionName ($VERSION_NAME) and release tag ($TAG) are different"
               exit 1

@@ -20,6 +20,16 @@ jobs:
           fetch-depth: 0
           ref: main
 
+      - name: Check version
+        run: |
+          TAG=${{ inputs.tag }}
+          VERSION_NAME=$(grep "versionName =" app/build.gradle.kts | awk -F'=' '{print $2}' | tr -d -c '0-9.')
+
+          if [ "$(printf '%s\n' "${TAG//v}" "$VERSION_NAME" | sort -V | head -n1)" = "${TAG//v}" ]; then 
+              echo "Fail: new version ($TAG) is less than or equal to the current version ($VERSION_NAME)."
+              exit 1
+          fi
+
       - name: Setup Android Environment
         uses: ./.github/actions/setup-android
 
