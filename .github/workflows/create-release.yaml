@@ -7,6 +7,10 @@ on:
         description: new app version
         required: true
         type: string
+      is-pre-release:
+        description: set release as non-production ready
+        default: false
+        type: boolean
 
 jobs:
   create-release:
@@ -49,7 +53,11 @@ jobs:
         run: ./gradlew app:assembleRelease
 
       - name: Create release
-        run: gh release create ${{ inputs.tag }} --title=${{ inputs.tag }} --generate-notes
+        run: |
+          gh release create ${{ inputs.tag }} \
+            --title=${{ inputs.tag }} \
+            --generate-notes \
+            $(${{ inputs.is-pre-release }} && printf %s "--prerelease")
 
       - name: Upload release assets
         run: |
