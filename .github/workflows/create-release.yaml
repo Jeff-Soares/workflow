@@ -12,6 +12,9 @@ on:
         default: false
         type: boolean
 
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   create-release:
     runs-on: ubuntu-latest
