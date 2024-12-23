@@ -53,7 +53,7 @@ jobs:
       - name: Build Android App Bundle
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
-        run: ./gradlew app:assembleRelease
+        run: ./gradlew clean app:assembleProductionRelease app:bundleProductionRelease
 
       - name: Create release
         run: |
@@ -65,5 +65,5 @@ jobs:
       - name: Upload release assets
         run: |
           gh release upload ${{ inputs.tag }} \
-            app/build/outputs/apk/production/release/app-production-release.apk \
-            app/build/outputs/apk/staging/release/app-staging-release.apk
+            app/build/outputs/bundle/productionRelease/app-production-release.aab \
+            app/build/outputs/apk/production/release/app-production-release.apk
