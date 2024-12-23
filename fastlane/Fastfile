@@ -4,11 +4,8 @@ platform :android do
 
   desc "Deploy a new version to the Google Play"
   lane :deploy_closed do
-
-    gradle(task: "clean app:bundleProductionRelease")
-
     upload_to_play_store(
-      aab: 'app/build/outputs/bundle/productionRelease/app-production-release.aab',
+      aab: 'app-production-release.aab',
       track: 'internal',
       release_status: "draft",
       skip_upload_screenshots: true,
