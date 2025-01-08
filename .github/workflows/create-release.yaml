@@ -46,7 +46,7 @@ jobs:
         run: ./gradlew clean app:testProductionDebugUnitTest
 
       - name: Bump app version
-        uses: ./.github/actions/android-version-bump
+        uses: ./.github/actions/android-set-version
         with:
           version: ${{ inputs.tag }}
 

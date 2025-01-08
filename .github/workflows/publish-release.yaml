@@ -27,9 +27,6 @@ jobs:
               exit 1
           fi
 
-      - name: Setup Android Environment
-        uses: ./.github/actions/setup-android
-
       - name: Download release app bundle
         uses: gh release download --pattern app-production-release.aab
 
