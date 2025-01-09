@@ -1,0 +1,46 @@
+name: Pull Request - Create release
+
+on:
+  pull_request:
+    types: [closed]
+
+env:
+  GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    if: >
+        github.event.pull_request.merged == true && 
+        (startsWith(github.head_ref, 'release') || startsWith(github.head_ref, 'prerelease')) 
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Android Environment
+        uses: ./.github/actions/setup-android
+
+      - name: Build Android App Bundle
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+        run: ./gradlew app:assembleProductionRelease app:bundleProductionRelease
+
+      - name: Create new release
+        run: |
+          VERSION=$(grep "versionName =" app/build.gradle.kts | awk -F'=' '{print $2}' | tr -d -c '0-9.')
+          TAG="v$VERSION"
+          
+          gh release create "$TAG" \
+            --title="$TAG" \
+            --generate-notes \
+            $(${{ startsWith(github.head_ref, 'prerelease') }} && printf %s "--prerelease")
+
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Upload release assets
+        run: |
+          gh release upload "$TAG" \
+            app/build/outputs/bundle/productionRelease/app-production-release.aab \
+            app/build/outputs/apk/production/release/app-production-release.apk
