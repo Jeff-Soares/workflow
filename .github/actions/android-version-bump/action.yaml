@@ -1,41 +1,44 @@
 name: Android version bump
-description: Overrides versionCode and versionName in build.gradle.kts
+description: Overrides versionCode and versionname in build.gradle
 
 inputs:
-  version:
-    description: new app version
+  bump-type:
+    description: type of release bump
     required: true
-  
 
 runs:
   using: composite
   steps:
-    - name: Edit build.gradle.kts
+    - name: Bump version
       run: |
         GRADLE_FILE="app/build.gradle.kts"
         VERSION_CODE=$(grep "versionCode" $GRADLE_FILE | awk -F'=' '{print $2}' | tr -d -c '0-9')
-        NEW_VERSION_CODE=$((VERSION_CODE + 1))
-        TAG=${{ inputs.tag }}
-        NEW_VERSION_NAME=${TAG//v}
+        CURRENT_VERSION_NAME=$(grep "versionName =" $GRADLE_FILE | awk -F'=' '{print $2}' | tr -d -c '0-9.')
+        
+        IFS='.' read -r major minor patch <<< "$CURRENT_VERSION_NAME"
+        
+        case ${{ inputs.bump-type }} in
+          major)
+            major=$((major + 1))
+            minor=0
+            patch=0
+            ;;
+          minor)
+            minor=$((minor + 1))
+            patch=0
+            ;;
+          patch)
+            patch=$((patch + 1))
+            ;;
+        esac
+        
+        echo "NEW_VERSION_CODE=$((VERSION_CODE + 1))" >> $GITHUB_ENV
+        echo "NEW_VERSION_NAME="$major.$minor.$patch"" >> $GITHUB_ENV
+      shell: bash
 
+    - name: Edit build.gradle
+      run: |
+        GRADLE_FILE="app/build.gradle.kts"
         sed -i "s/versionCode = .*/versionCode = $NEW_VERSION_CODE/" $GRADLE_FILE
-        sed -i "s/versionName = \".*\"/versionName = \"$NEW_VERSION_NAME\"/" $GRADLE_FILE 
-
-        echo "NEW_VERSION_CODE=$NEW_VERSION_CODE" >> $GITHUB_ENV
-        echo "NEW_VERSION_NAME=$NEW_VERSION_NAME" >> $GITHUB_ENV
-      shell: bash
-
-    - name: Set up Git
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-      shell: bash
-
-    - name: Commit changes
-      run: |
-        TAG=${{ inputs.tag }}
-        git commit -a -m "Versao $TAG"
-        git push origin main
-        git tag $TAG
-        git push origin $TAG
+        sed -i "s/versionName = \".*\"/versionName = \"$NEW_VERSION_NAME\"/" $GRADLE_FILE
       shell: bash
