@@ -3,11 +3,12 @@ default_platform(:android)
 platform :android do
 
   desc "Deploy a new version to the Google Play"
-  lane :deploy_closed do
+  lane :deploy do
     upload_to_play_store(
       aab: 'app-production-release.aab',
       track: 'internal',
       release_status: "draft",
+      version_name: build_number + "(" + version_name + ")",
       skip_upload_screenshots: true,
       skip_upload_images: true,
       validate_only: false

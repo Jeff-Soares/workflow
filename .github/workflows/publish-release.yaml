@@ -44,4 +44,4 @@ jobs:
         run: bundle install
 
       - name: Build and publish to closed test track
-        run: bundle exec fastlane deploy_closed
+        run: bundle exec fastlane deploy
