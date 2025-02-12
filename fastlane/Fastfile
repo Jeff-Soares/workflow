@@ -4,11 +4,16 @@ platform :android do
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do
+
+    build_gradle = File.read("../app/build.gradle.kts")
+    version_code = build_gradle.match(/versionCode = (\d+)/).captures[0]
+    version_name = build_gradle.match(/versionName = "(.+)"/).captures[0]
+
     upload_to_play_store(
       aab: 'app-production-release.aab',
       track: 'internal',
       release_status: "draft",
-      version_name: build_number + "(" + version_name + ")",
+      version_name: "#{version_code} (#{version_name})",
       skip_upload_screenshots: true,
       skip_upload_images: true,
       validate_only: false
