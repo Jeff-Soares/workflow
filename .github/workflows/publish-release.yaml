@@ -28,7 +28,7 @@ jobs:
           fi
 
       - name: Download release app bundle
-        uses: gh release download --pattern app-production-release.aab
+        run: gh release download --pattern app-production-release.aab
 
       - name: Create service account file
         env:
