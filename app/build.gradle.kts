@@ -64,7 +64,7 @@ android {
         }
     }
     applicationVariants.all {
-        val suffix = System.getenv("VERSION_SUFFIX")?.let { "-$it" } ?: ""
+        val suffix = System.getenv("VERSION_SUFFIX")?.let { "-$it" } ?: return@all
         outputs.forEach { output ->
             val newVersionCode = versionName + suffix
             (output as ApkVariantOutputImpl).versionNameOverride = newVersionCode
