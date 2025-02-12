@@ -5,7 +5,7 @@ inputs:
   commandlinetools-version:
     description: 'See: https://developer.android.com/studio#command-line-tools-only'
     required: false
-    default: '11076708'
+    default: '12266719'
 
 runs:
   using: composite
