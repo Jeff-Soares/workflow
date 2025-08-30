@@ -8,8 +8,16 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-val keystoreProperties = Properties()
-keystoreProperties.load(System.getenv("KEYSTORE")?.byteInputStream() ?: FileInputStream(rootProject.file(".keystore")))
+val keystoreProperties = Properties().apply {
+    val keystoreEnv = System.getenv("KEYSTORE")?.byteInputStream()
+    val keystoreFile by lazy {
+        rootProject.file(
+            if (project.hasProperty("ci")) "sample.keystore" else ".keystore"
+        ).inputStream()
+    }
+
+    load(keystoreEnv ?: keystoreFile)
+}
 
 android {
     namespace = "com.jx.workflow"
