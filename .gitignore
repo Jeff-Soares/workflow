@@ -1,11 +1,50 @@
-*.iml
+# Gradle files
 .gradle/
-.idea/
 build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+.keystore
+secrets/
+
+# Android Studio generated files and folders
 captures/
-.DS_Store
+.externalNativeBuild/
+.cxx/
+output.json
+*.apk
+*.aab
+*.dex
+
+# Native files
+*.o
+*.so
 .externalNativeBuild
 .cxx
-.keystore
-local.properties
-secrets/
+
+# IntelliJ
+*.iml
+*.idea/
+!.idea/.name
+!.idea/icon.svg
+!.idea/modules.xml
+!.idea/modules/Kabum_K5.iml
+.kotlin/
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+
+# Android Profiling
+*.hprof
+
+# Log/OS Files
+*.log
+
+# macOS
+*.DS_Store*
+
+# Fastlane
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output

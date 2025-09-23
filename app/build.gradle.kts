@@ -11,24 +11,22 @@ plugins {
 val keystoreProperties = Properties().apply {
     val keystoreEnv = System.getenv("KEYSTORE")?.byteInputStream()
     val keystoreFile by lazy {
-        rootProject.file(
-            if (project.hasProperty("ci")) "sample.keystore" else ".keystore"
-        ).inputStream()
+        val path = if (project.hasProperty("ci")) "sample.keystore" else ".keystore"
+        rootProject.file(path).inputStream()
     }
-
     load(keystoreEnv ?: keystoreFile)
 }
 
 android {
     namespace = "com.jx.workflow"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.jx.workflow"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.1.0"
+        versionCode = generateVersionCode()
+        versionName = libs.versions.app.version.name.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -92,7 +90,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -102,10 +99,30 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     testImplementation(libs.junit)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+tasks.register("printVersion") {
+    group = "versioning"
+    description = "Prints the dynamically generated versionCode and versionName to the terminal"
+    val versionCode = android.defaultConfig.versionCode
+    val versionName = android.defaultConfig.versionName
+    doLast {
+        println("VERSION_CODE=$versionCode")
+        println("VERSION_NAME=$versionName")
+    }
+}
+
+private fun generateVersionCode(): Int {
+    val name = libs.versions.app.version.name.get()
+    val build = System.getenv("VERSION_BUILD")?.toIntOrNull() ?: 0
+    val (major, minor, patch) = name.split(".").map(String::toInt)
+    return major * 10_000_000 + minor * 10_000 + patch * 100 + build
 }
