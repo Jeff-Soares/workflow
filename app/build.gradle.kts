@@ -11,7 +11,7 @@ plugins {
 val keystoreProperties = Properties().apply {
     val keystoreEnv = System.getenv("KEYSTORE")?.byteInputStream()
     val keystoreFile by lazy {
-        val path = if (project.hasProperty("ci")) "sample.keystore" else ".keystore"
+        val path = if (project.hasProperty("test")) "sample.keystore" else ".keystore"
         rootProject.file(path).inputStream()
     }
     load(keystoreEnv ?: keystoreFile)

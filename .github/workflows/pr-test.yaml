@@ -11,25 +11,22 @@ concurrency:
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/jeff-soares/android-env:latest
     timeout-minutes: 15
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Android Environment
-        uses: ./.github/actions/setup-android
+      - name: Install fastlane
+        run: bundle install
 
-      - name: Run lint checks and unit tests
-        env:
-          KEYSTORE: ${{ secrets.KEYSTORE }}
-        run: ./gradlew clean app:lintStagingDebug app:testStagingDebugUnitTest
+      - name: Run fastlane tests
+        run: bundle exec fastlane test
 
       - name: Upload reports
-        if: always()
+        if: always() && !env.ACT
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
-          path: |
-            app/build/reports/tests/testStagingDebugUnitTest
-            app/build/reports/lint-results-stagingDebug.*
+          path: app/build/reports/tests/testStagingDebugUnitTest
