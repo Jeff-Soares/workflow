@@ -5,12 +5,13 @@ GEM
       base64
       nkf
       rexml
+    abbrev (0.1.2)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     artifactory (3.0.17)
     atomos (0.1.3)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1152.0)
+    aws-partitions (1.1163.0)
     aws-sdk-core (3.232.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
@@ -22,7 +23,7 @@ GEM
     aws-sdk-kms (1.112.0)
       aws-sdk-core (~> 3, >= 3.231.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.198.0)
+    aws-sdk-s3 (1.199.0)
       aws-sdk-core (~> 3, >= 3.231.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
@@ -30,12 +31,13 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     babosa (1.0.4)
     base64 (0.3.0)
-    bigdecimal (3.2.2)
+    bigdecimal (3.2.3)
     claide (1.1.0)
     colored (1.2)
     colored2 (3.1.2)
     commander (4.6.0)
       highline (~> 2.0.0)
+    csv (3.3.5)
     declarative (0.0.20)
     digest-crc (0.7.0)
       rake (>= 12.0.0, < 14.0.0)
@@ -114,6 +116,9 @@ GEM
       xcodeproj (>= 1.13.0, < 2.0.0)
       xcpretty (~> 0.4.1)
       xcpretty-travis-formatter (>= 0.0.3, < 2.0.0)
+    fastlane-plugin-firebase_app_distribution (0.10.1)
+      google-apis-firebaseappdistribution_v1 (~> 0.3.0)
+      google-apis-firebaseappdistribution_v1alpha (~> 0.2.0)
     fastlane-sirp (1.0.0)
       sysrandom (~> 1.0)
     gh_inspector (1.1.3)
@@ -127,6 +132,10 @@ GEM
       representable (~> 3.0)
       retriable (>= 2.0, < 4.a)
       rexml
+    google-apis-firebaseappdistribution_v1 (0.3.0)
+      google-apis-core (>= 0.11.0, < 2.a)
+    google-apis-firebaseappdistribution_v1alpha (0.2.0)
+      google-apis-core (>= 0.11.0, < 2.a)
     google-apis-iamcredentials_v1 (0.17.0)
       google-apis-core (>= 0.11.0, < 2.a)
     google-apis-playcustomapp_v1 (0.13.0)
@@ -159,7 +168,7 @@ GEM
     httpclient (2.9.0)
       mutex_m
     jmespath (1.6.2)
-    json (2.13.2)
+    json (2.15.0)
     jwt (2.10.2)
       base64
     logger (1.7.0)
@@ -173,6 +182,7 @@ GEM
     nkf (0.2.0)
     optparse (0.6.0)
     os (1.1.4)
+    ostruct (0.6.3)
     plist (3.7.2)
     public_suffix (6.0.2)
     rake (13.3.0)
@@ -181,7 +191,7 @@ GEM
       trailblazer-option (>= 0.1.1, < 0.2.0)
       uber (< 0.2.0)
     retriable (3.1.2)
-    rexml (3.4.2)
+    rexml (3.4.4)
     rouge (3.28.0)
     ruby2_keywords (0.0.5)
     rubyzip (2.4.1)
@@ -223,7 +233,13 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  abbrev
+  csv
   fastlane
+  fastlane-plugin-firebase_app_distribution
+  logger
+  mutex_m
+  ostruct
 
 BUNDLED WITH
-   2.7.1
+   2.7.2

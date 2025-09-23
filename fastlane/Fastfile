@@ -1,29 +1,100 @@
 default_platform(:android)
 
+firebase_app_id_prod = "1:143012235191:android:64189920f20e48e9290a32"
+firebase_app_id_stg = "1:143012235191:android:de674dd8455862a8290a32"
+service_account_file = "service_account.json"
+service_account_content = ENV["GOOGLE_PLAY_SERVICE_ACCOUNT"]
+
 platform :android do
+
   lane :test do |options|
     gradle(
-        task: "test",
-        flavor: options[:flavor] || "Prod",
+        task: "app:test",
+        flavor: options[:flavor] || "Staging",
         build_type: options[:build_type] || "Debug",
-        flags: "-Pci"
+        flags: "-Ptest"
     )
   end
 
-  desc "Deploy a new version to the Google Play"
-  lane :deploy do
-    build_gradle = File.read("../app/build.gradle.kts")
-    version_code = build_gradle.match(/versionCode = (\d+)/).captures[0]
-    version_name = build_gradle.match(/versionName = "(.+)"/).captures[0]
+  desc "Build aab and apk of Production Release variant"
+  lane :build_release do
+    gradle(tasks: ["app:assembleProductionRelease", "app:bundleProductionRelease"])
+  end
+
+  desc "Publish a new version to the Google Play"
+  lane :publish_google_play do
+    create_service_account
+
+    versions = get_app_versions
 
     upload_to_play_store(
-      aab: 'app-production-release.aab',
-      track: 'internal',
-      release_status: "draft",
-      version_name: "#{version_code} (#{version_name})",
+      aab: 'app/build/outputs/bundle/productionRelease/app-production-release.aab',
+      track: options[:track] || 'internal',
+      release_status: options[:status] || "draft",
+      version_name: "#{version[:version_name]} (#{versions[:version_code]})",
       skip_upload_screenshots: true,
       skip_upload_images: true,
-      validate_only: false
+      skip_upload_apk: true
     )
   end
+
+  desc "Publish test build to Firebase App Distribution"
+  lane :publish_firebase do |options|
+    flavor = options[:flavor] || "Staging"
+    build_type = options[:build_type] || "Release"
+
+    gradle(
+        task: "app:assemble",
+        flavor: flavor,
+        build_type: build_type
+    )
+
+    create_service_account
+
+    firebase_app_distribution(
+      app: flavor.downcase == "production" ? firebase_app_id_prod : firebase_app_id_stg,
+      android_artifact_type: "APK",
+      android_artifact_path: "app/build/outputs/apk/#{flavor}/#{build_type}/app-#{flavor}-#{build_type}.apk",
+      service_credentials_file: service_account_file,
+      groups: "qa"
+    )
+  end
+
+  lane :publish_internal_app_sharing do |options|
+    url = upload_to_play_store_internal_app_sharing(
+      apk: options[:apk_path]
+    )
+    UI.success "APK successfully upload to Google Play Internal App Sharing"
+    UI.message "URL to download: #{url}"
+  end
+
+  lane :send_release_notification do |options|
+    versions = get_app_versions
+
+    send_google_chat_notification(
+      version_code: versions[:version_code],
+      version_name: version[:version_name],
+      webhook_url: options[:webhook_url],
+      gh_token: options[:gh_token]
+    )
+  end
+
+  private_lane :create_service_account do
+    UI.header "Generating google service account file"
+
+    if service_account_content.to_s.strip.empty?
+      UI.user_error!("$GOOGLE_PLAY_SERVICE_ACCOUNT content is empty")
+    end
+
+    UI.message "Writing GOOGLE_PLAY_SERVICE_ACCOUNT env var to #{service_account_file} file..."
+    File.write("../#{service_account_file}", service_account_content)
+  end
+
+  private_lane :get_app_versions do
+    output = gradle(task: "printVersion", print_command: false)
+    version_code = output.match(/VERSION_CODE=(\d+)/)[1]
+    version_name = output.match(/VERSION_NAME=([\d.]+)/)[1]
+    { version_code: version_code, version_name: version_name }
+  end
+
 end
