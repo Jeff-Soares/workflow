@@ -69,11 +69,8 @@ platform :android do
   end
 
   lane :send_release_notification do |options|
-    versions = get_app_versions
-
     send_google_chat_notification(
-      version_code: versions[:version_code],
-      version_name: versions[:version_name],
+      version_name: options[:version_name],
       webhook_url: options[:webhook_url],
       gh_token: options[:gh_token]
     )

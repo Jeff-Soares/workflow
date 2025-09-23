@@ -3,7 +3,6 @@ module Fastlane
     class SendGoogleChatNotificationAction < Action
       def self.run(params)
         version_name = params[:version_name]
-        version_code = params[:version_code]
         webhook_url  = params[:webhook_url]
         api_token    = params[:gh_token]
 
@@ -13,7 +12,7 @@ module Fastlane
         release_info = other_action.github_api(
           api_token: api_token,
           http_method: 'GET',
-          path: "repos/Jeff-Soares/workflow/releases/tags/v#{version_name}"
+          path: "repos/Jeff-Soares/workflow/releases/tags/#{version_name}"
         )
         release_body = release_info[:json]["body"]
 
@@ -59,7 +58,7 @@ module Fastlane
 
         payload = card(
           header: header(
-            title: "Release v#{version_name} (#{version_code}) 🚀",
+            title: "Release v#{version_name} 🚀",
             subtitle: "Enviado ao Google Play",
             image_url: "https://developers.google.com/static/site-assets/images/products/android-logo.png"
           ),
@@ -71,7 +70,7 @@ module Fastlane
 
         # Send to Google Chat
         curl_cmd = [
-          "curl", "-X", "POST", webhook_url,
+          "curl", "-X", "POST", "#{webhook_url}",
           "-H", "Content-Type: application/json",
           "--data", json_payload
         ]
@@ -83,10 +82,6 @@ module Fastlane
         [
           FastlaneCore::ConfigItem.new(key: :version_name,
             description: "Release version name",
-            optional: false,
-            type: String),
-          FastlaneCore::ConfigItem.new(key: :version_code,
-            description: "Release version code",
             optional: false,
             type: String),
           FastlaneCore::ConfigItem.new(key: :webhook_url,
