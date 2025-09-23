@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build Release
+      - name: Install fastlane
         run: bundle install
 
       - name: Build Release

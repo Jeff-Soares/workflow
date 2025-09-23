@@ -10,7 +10,7 @@ module Fastlane
         UI.header("Generating Jira release notes for v#{version_name}")
 
         # Get release body
-        release_info = github_api(
+        release_info = other_action.github_api(
           api_token: api_token,
           http_method: 'GET',
           path: "repos/Jeff-Soares/workflow/releases/tags/v#{version_name}"
@@ -27,7 +27,7 @@ module Fastlane
           UI.message("Searching for Jira links in PR ##{pr}...")
 
           # Get PR details
-          pr_info = github_api(
+          pr_info = other_action.github_api(
             api_token: api_token,
             http_method: 'GET',
             path: "repos/Jeff-Soares/workflow/pulls/#{pr}"
@@ -91,6 +91,10 @@ module Fastlane
             type: String),
           FastlaneCore::ConfigItem.new(key: :webhook_url,
             description: "Google Chat webhook URL",
+            optional: false,
+            type: String),
+          FastlaneCore::ConfigItem.new(key: :gh_token,
+            description: "Github TOKEN to access release info",
             optional: false,
             type: String)
         ]

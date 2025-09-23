@@ -22,7 +22,7 @@ platform :android do
   end
 
   desc "Publish a new version to the Google Play"
-  lane :publish_google_play do
+  lane :publish_google_play do |options|
     create_service_account
 
     versions = get_app_versions
@@ -31,7 +31,7 @@ platform :android do
       aab: 'app/build/outputs/bundle/productionRelease/app-production-release.aab',
       track: options[:track] || 'internal',
       release_status: options[:status] || "draft",
-      version_name: "#{version[:version_name]} (#{versions[:version_code]})",
+      version_name: "#{versions[:version_name]} (#{versions[:version_code]})",
       skip_upload_screenshots: true,
       skip_upload_images: true,
       skip_upload_apk: true
@@ -73,7 +73,7 @@ platform :android do
 
     send_google_chat_notification(
       version_code: versions[:version_code],
-      version_name: version[:version_name],
+      version_name: versions[:version_name],
       webhook_url: options[:webhook_url],
       gh_token: options[:gh_token]
     )
