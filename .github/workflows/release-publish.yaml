@@ -32,13 +32,6 @@ jobs:
       - name: Publish to Google Play
         run: bundle exec fastlane publish_google_play
 
-      - name: Send Release Notification
-        run: |
-          bundle exec fastlane send_release_notification \
-            version_name:"${{ github.ref_name }}" \
-            webhook_url:"${{ env.WEBHOOK_URL }}" \
-            gh_token:"${{ secrets.GITHUB_TOKEN }}"
-
       - name: Upload to Github Release Assets
         uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836
         with:
