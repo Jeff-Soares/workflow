@@ -18,7 +18,7 @@ platform :android do
 
   desc "Build aab and apk of Production Release variant"
   lane :build_release do
-    gradle(tasks: ["app:assembleProductionRelease", "app:bundleProductionRelease"])
+    gradle(task: "app:bundleProductionRelease")
   end
 
   desc "Publish a new version to the Google Play"
@@ -39,7 +39,7 @@ platform :android do
   end
 
   desc "Publish test build to Firebase App Distribution"
-  lane :publish_firebase do |options|
+  lane :publish_firebase_app_distribution do |options|
     flavor = options[:flavor] || "Staging"
     build_type = options[:build_type] || "Release"
 
