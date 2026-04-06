@@ -60,8 +60,8 @@ jobs:
 
       - name: Upload to Firebase App Distribution
         run: |
-          bundle exec fastlane firebase_app_distribution \
-            flavor:"production" \
+          bundle exec fastlane publish_firebase_app_distribution \
+            flavor:"staging" \
             build_type:"release" \
             apk_path:"app-staging-release.apk" \
             groups:"qa"
