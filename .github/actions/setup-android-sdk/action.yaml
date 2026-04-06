@@ -37,5 +37,7 @@ runs:
 
     - name: Install platform tools
       run: |
-        $ANDROID_HOME/cmdline-tools/tools/bin/sdkmanager --install "platform-tools"
+        COMPILE_SDK=$(grep 'compileSdk' gradle/libs.versions.toml | sed 's/.*= *"\(.*\)"/\1/')
+        
+        $ANDROID_HOME/cmdline-tools/tools/bin/sdkmanager --install "platforms;android-$COMPILE_SDK"
       shell: bash

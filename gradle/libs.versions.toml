@@ -1,5 +1,6 @@
 [versions]
 app-version-name = "0.5.2"
+compileSdk = "36"
 
 agp = "8.8.0"
 kotlin = "2.1.0"

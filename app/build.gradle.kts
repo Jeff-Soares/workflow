@@ -19,7 +19,7 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace = "com.jx.workflow"
-    compileSdk = 36
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.jx.workflow"
