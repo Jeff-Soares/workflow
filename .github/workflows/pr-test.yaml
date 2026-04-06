@@ -19,12 +19,6 @@ jobs:
       - name: Setup Android Environment
         uses: ./.github/actions/setup-android
 
-      - uses: gradle/actions/setup-gradle@v6
-        id: setup-gradle
-        with:
-          cache-provider: basic
-          cache-read-only: false
-
       - name: Run tests
         run: ./gradlew app:testStagingDebugUnitTest -Ptest --no-daemon
 
