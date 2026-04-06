@@ -40,23 +40,19 @@ platform :android do
 
   desc "Publish test build to Firebase App Distribution"
   lane :publish_firebase_app_distribution do |options|
-    flavor = options[:flavor] || "Staging"
-    build_type = options[:build_type] || "Release"
-
-    gradle(
-        task: "app:assemble",
-        flavor: flavor,
-        build_type: build_type
-    )
+    flavor = options[:flavor] || "staging"
+    build_type = options[:build_type] || "release"
+    apk_path = options[:apk_path] || "app/build/outputs/apk/#{flavor}/#{build_type}/app-#{flavor}-#{build_type}.apk"
+    groups = options[:groups] || "qa"
 
     create_service_account
 
     firebase_app_distribution(
       app: flavor.downcase == "production" ? firebase_app_id_prod : firebase_app_id_stg,
       android_artifact_type: "APK",
-      android_artifact_path: "app/build/outputs/apk/#{flavor}/#{build_type}/app-#{flavor}-#{build_type}.apk",
+      android_artifact_path: apk_path,
       service_credentials_file: service_account_file,
-      groups: "qa"
+      groups: groups
     )
   end
 

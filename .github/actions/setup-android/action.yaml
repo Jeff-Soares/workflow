@@ -10,10 +10,16 @@ runs:
         distribution: "temurin"
         java-version: "17"
 
+    - name: Make ANDROID_HOME available to github env vars
+      run: echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+      shell: bash
+
     - name: Setup Android SDK
+      if: ${{ !env.ANDROID_HOME }}
       uses: ./.github/actions/setup-android-sdk
 
-    - uses: gradle/actions/setup-gradle@v6
+    - name: Setup gradle cache
+      uses: gradle/actions/setup-gradle@v6
       id: setup-gradle
       with:
         cache-provider: basic
