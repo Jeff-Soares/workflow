@@ -2,7 +2,7 @@ name: Pull Request - Tests
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [ opened, synchronize ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -10,19 +10,22 @@ concurrency:
 
 jobs:
   unit-tests:
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/jeff-soares/android-env:latest
+    runs-on: codebuild-workflow-${{ github.run_id }}-${{ github.run_attempt }}
     timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install fastlane
-        run: bundle install
+      - name: Setup Android Environment
+        uses: ./.github/actions/setup-android
 
-      - name: Run fastlane tests
-        run: bundle exec fastlane test
+      - uses: gradle/actions/setup-gradle@v6
+        id: setup-gradle
+        with:
+          cache-provider: basic
+
+      - name: Run tests
+        run: ./gradlew app:testStagingDebugUnitTest -Ptest --no-daemon
 
       - name: Upload reports
         if: always() && !env.ACT
