@@ -23,6 +23,7 @@ jobs:
         id: setup-gradle
         with:
           cache-provider: basic
+          cache-read-only: false
 
       - name: Run tests
         run: ./gradlew app:testStagingDebugUnitTest -Ptest --no-daemon
