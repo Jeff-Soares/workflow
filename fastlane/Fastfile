@@ -12,13 +12,13 @@ platform :android do
         task: "app:test",
         flavor: options[:flavor] || "Staging",
         build_type: options[:build_type] || "Debug",
-        flags: "-Ptest"
+        flags: "-Ptest --no-daemon"
     )
   end
 
   desc "Build aab and apk of Production Release variant"
   lane :build_release do
-    gradle(task: "app:bundleProductionRelease")
+    gradle(task: "app:bundleProductionRelease", flags: "--no-daemon")
   end
 
   desc "Publish a new version to the Google Play"
