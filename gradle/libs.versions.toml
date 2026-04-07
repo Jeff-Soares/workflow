@@ -1,5 +1,5 @@
 [versions]
-app-version-name = "0.5.2"
+app-version-name = "0.6.0"
 compileSdk = "36"
 
 agp = "8.8.0"
