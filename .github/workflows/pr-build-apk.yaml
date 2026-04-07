@@ -24,6 +24,9 @@ jobs:
       - name: Setup Android Environment
         uses: ./.github/actions/setup-android
 
+      - name: Set Build Number Environment Variable
+        run: echo "VERSION_BUILD=$((${{ github.run_number }} % 100))" >> $GITHUB_ENV
+
       - name: Build APK - STG
         run: ./gradlew app:assembleStagingRelease --no-daemon
 
