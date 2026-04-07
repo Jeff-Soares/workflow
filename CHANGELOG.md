@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/Jeff-Soares/workflow/compare/v0.5.2...v0.6.0) (2026-04-07)
+
+
+### Features
+
+* implementing gradle v6 caching ([e90868e](https://github.com/Jeff-Soares/workflow/commit/e90868e0bce7e8d205effc738d1926012c40ec7d))
+
 ## [0.5.2](https://github.com/Jeff-Soares/workflow/compare/v0.5.1...v0.5.2) (2025-10-31)
 
 
