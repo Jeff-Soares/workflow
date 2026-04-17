@@ -38,10 +38,8 @@ class MainActivity : ComponentActivity() {
 fun WorkflowScreen(modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
             .semantics { testTagsAsResourceId = true },
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
     ) {
         var name by remember { mutableStateOf("") }
         var greeting by remember { mutableStateOf("") }
