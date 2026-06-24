@@ -39,10 +39,10 @@ Build aab and apk of Production Release variant
 
 Publish a new version to the Google Play
 
-### android publish_firebase
+### android publish_firebase_app_distribution
 
 ```sh
-[bundle exec] fastlane android publish_firebase
+[bundle exec] fastlane android publish_firebase_app_distribution
 ```
 
 Publish test build to Firebase App Distribution
