@@ -1,5 +1,3 @@
-import com.android.build.gradle.internal.api.ApkVariantOutputImpl
-import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
@@ -19,12 +17,12 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace = "com.jx.workflow"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.jx.workflow"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 37
         versionCode = generateVersionCode()
         versionName = libs.versions.app.version.name.get()
 
@@ -32,6 +30,7 @@ android {
 
         buildConfigField("String", "TEST_VARIABLE", keystoreProperties["testVariable"] as String)
     }
+
     signingConfigs {
         create("release") {
             storeFile = file("../release.jks")
@@ -46,6 +45,7 @@ android {
             storePassword = "debugkey"
         }
     }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -58,6 +58,7 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
     flavorDimensions.add("environment")
     productFlavors {
         create("production") {
@@ -69,31 +70,39 @@ android {
             versionNameSuffix = "-stg"
         }
     }
-    applicationVariants.all {
-        val suffix = System.getenv("VERSION_SUFFIX")?.let { "-$it" } ?: return@all
-        outputs.forEach { output ->
-            val newVersionCode = versionName + suffix
-            (output as ApkVariantOutputImpl).versionNameOverride = newVersionCode
-        }
-    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+
     buildFeatures {
         buildConfig = true
         compose = true
     }
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
+androidComponents {
+    onVariants { variant ->
+        val suffix = System.getenv("VERSION_SUFFIX")?.let { "-$it" } ?: return@onVariants
+
+        variant.outputs.forEach { output ->
+            val newVersionName = output.versionName.orNull?.plus(suffix) ?: return@forEach
+            output.versionName.set(newVersionName)
+        }
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
@@ -102,7 +111,6 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
     debugImplementation(libs.androidx.ui.tooling)
