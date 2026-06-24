@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.0](https://github.com/Jeff-Soares/workflow/compare/v0.6.0...v0.7.0) (2026-06-24)
+
+
+### Features
+
+* add KMP shared module ([b6d2ff1](https://github.com/Jeff-Soares/workflow/commit/b6d2ff19eb1631dbf0be8a81c1583fdea96dbe9c))
+* new feature-a + b ([7fc64e6](https://github.com/Jeff-Soares/workflow/commit/7fc64e6fca275b00acadd748b16b3c2190e84030))
+
+
+### Bug Fixes
+
+* update android commandlinetools version ([91e3350](https://github.com/Jeff-Soares/workflow/commit/91e3350a8e217fb473950de1ed9010192a9263ed))
+
 ## [0.6.0](https://github.com/Jeff-Soares/workflow/compare/v0.5.2...v0.6.0) (2026-04-07)
 
 
