@@ -2,8 +2,7 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.compose.compiler)
 }
 
 val keystoreProperties = Properties().apply {
@@ -17,12 +16,12 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace = "com.jx.workflow"
-    compileSdk = 37
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.jx.workflow"
-        minSdk = 24
-        targetSdk = 37
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = generateVersionCode()
         versionName = libs.versions.app.version.name.get()
 
@@ -79,6 +78,7 @@ android {
     buildFeatures {
         buildConfig = true
         compose = true
+        resValues = true
     }
 }
 
@@ -98,6 +98,9 @@ androidComponents {
 }
 
 dependencies {
+    implementation(projects.shared)
+    implementation(project(":shared"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
