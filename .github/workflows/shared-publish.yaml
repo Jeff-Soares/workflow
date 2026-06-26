@@ -1,0 +1,75 @@
+name: Shared - Build & publish XCFramework
+
+on:
+  push:
+    tags:
+      - 'shared-v*'
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: macos-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Android Environment
+        uses: ./.github/actions/setup-android
+
+      - name: Resolve version from tag
+        id: ver
+        run: echo "version=${GITHUB_REF_NAME#shared-v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build XCFramework (release)
+        run: ./gradlew :shared:assembleMobileSharedReleaseXCFramework --no-daemon
+
+      - name: Zip + checksum
+        id: pkg
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent \
+            shared/build/XCFrameworks/release/MobileShared.xcframework \
+            "$GITHUB_WORKSPACE/MobileShared.xcframework.zip"
+          echo "checksum=$(swift package compute-checksum "$GITHUB_WORKSPACE/MobileShared.xcframework.zip")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload XCFramework to S3 (versioned, public)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: sa-east-1
+        run: |
+          aws s3 cp "$GITHUB_WORKSPACE/MobileShared.xcframework.zip" \
+            "s3://android-s3-tests/MobileShared-${{ steps.ver.outputs.version }}.xcframework.zip" \
+            --acl public-read
+
+      # --- Publicação no repositório mobile-shared (git no YAML) ---
+      - name: Checkout mobile-shared
+        uses: actions/checkout@v6
+        with:
+          repository: Jeff-Soares/mobile-shared
+          token: ${{ secrets.RELEASE_TOKEN }}
+          path: mobile-shared
+
+      - name: Generate Package.swift (somente geração)
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+          CHECKSUM: ${{ steps.pkg.outputs.checksum }}
+        run: bash .github/scripts/generate-package-swift.sh mobile-shared/Package.swift
+
+      - name: Commit, tag & release mobile-shared
+        working-directory: mobile-shared
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          VERSION: ${{ steps.ver.outputs.version }}
+          ZIP: ${{ github.workspace }}/MobileShared.xcframework.zip
+        run: |
+          git commit -am "chore: release shared ${VERSION}"
+          git tag "${VERSION}"
+          git push origin main "${VERSION}"
+
+          gh release create "${VERSION}" \
+            --repo Jeff-Soares/mobile-shared \
+            --title "${VERSION}" \
+            --notes "MobileShared ${VERSION}" "${ZIP}"
