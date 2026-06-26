@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/Jeff-Soares/workflow/compare/shared-v0.1.0...shared-v0.1.1) (2026-06-26)
+
+
+### Bug Fixes
+
+* just to test shared publish ([3061eca](https://github.com/Jeff-Soares/workflow/commit/3061eca1fadad11d29e0a97489b4cead33255f62))
+
 ## [0.1.0](https://github.com/Jeff-Soares/workflow/compare/shared-v0.0.1...shared-v0.1.0) (2026-06-26)
 
 
