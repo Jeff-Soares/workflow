@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/Jeff-Soares/workflow/compare/v0.7.0...v0.7.1) (2026-06-26)
+
+
+### Bug Fixes
+
+* compose preview annotation ([e5c8290](https://github.com/Jeff-Soares/workflow/commit/e5c829078a37056ab7917a2e3c53b9204d871505))
+
 ## [0.7.0](https://github.com/Jeff-Soares/workflow/compare/v0.6.0...v0.7.0) (2026-06-24)
 
 
