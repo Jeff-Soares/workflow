@@ -24,6 +24,8 @@ jobs:
         run: echo "version=${GITHUB_REF_NAME#shared-v}" >> "$GITHUB_OUTPUT"
 
       - name: Build XCFramework (release)
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
         run: ./gradlew :shared:assembleMobileSharedReleaseXCFramework --no-daemon
 
       - name: Zip + checksum
