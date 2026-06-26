@@ -15,6 +15,7 @@ fun App() {
         contentAlignment = Alignment.Center
     ) {
         Text("Hello from Shared Module!")
+        Text("Hello from Shared Module!")
     }
 }
 
