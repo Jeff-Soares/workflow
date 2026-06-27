@@ -44,6 +44,8 @@ fun WorkflowScreen(modifier: Modifier = Modifier) {
             .semantics { testTagsAsResourceId = true },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        App()
+
         var name by remember { mutableStateOf("") }
         var greeting by remember { mutableStateOf("") }
 
@@ -63,8 +65,6 @@ fun WorkflowScreen(modifier: Modifier = Modifier) {
             text = greeting,
             modifier = modifier.semantics { testTag = "text_greeting" }
         )
-
-        App()
     }
 }
 
