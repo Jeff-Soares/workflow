@@ -5,16 +5,13 @@ on:
     tags:
       - 'shared-v*'
 
-permissions:
-  contents: read
-
 jobs:
   publish:
     runs-on: macos-latest
     timeout-minutes: 45
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup Android Environment
         uses: ./.github/actions/setup-android
@@ -23,7 +20,7 @@ jobs:
         id: ver
         run: echo "version=${GITHUB_REF_NAME#shared-v}" >> "$GITHUB_OUTPUT"
 
-      - name: Build XCFramework (release)
+      - name: Build XCFramework
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
         run: ./gradlew :shared:assembleMobileSharedReleaseXCFramework --no-daemon
@@ -34,27 +31,30 @@ jobs:
           ditto -c -k --sequesterRsrc --keepParent \
             shared/build/XCFrameworks/release/MobileShared.xcframework \
             "$GITHUB_WORKSPACE/MobileShared.xcframework.zip"
+          
           echo "checksum=$(swift package compute-checksum "$GITHUB_WORKSPACE/MobileShared.xcframework.zip")" >> "$GITHUB_OUTPUT"
 
-      - name: Upload XCFramework to S3 (versioned, public)
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: sa-east-1
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: sa-east-1
+
+      - name: Upload XCFramework to S3
         run: |
           aws s3 cp "$GITHUB_WORKSPACE/MobileShared.xcframework.zip" \
             "s3://android-s3-tests/MobileShared-${{ steps.ver.outputs.version }}.xcframework.zip" \
             --acl public-read
 
-      # --- Publicação no repositório mobile-shared (git no YAML) ---
+      # --- Publicação no repositório mobile-shared ---
       - name: Checkout mobile-shared
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: Jeff-Soares/mobile-shared
           token: ${{ secrets.RELEASE_TOKEN }}
           path: mobile-shared
 
-      - name: Generate Package.swift (somente geração)
+      - name: Generate Package.swift
         env:
           VERSION: ${{ steps.ver.outputs.version }}
           CHECKSUM: ${{ steps.pkg.outputs.checksum }}
@@ -65,13 +65,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           VERSION: ${{ steps.ver.outputs.version }}
-          ZIP: ${{ github.workspace }}/MobileShared.xcframework.zip
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
           git commit -am "chore: release shared ${VERSION}"
-          git tag "${VERSION}"
-          git push origin main "${VERSION}"
+          git push origin main
 
           gh release create "${VERSION}" \
             --repo Jeff-Soares/mobile-shared \
             --title "${VERSION}" \
-            --notes "MobileShared ${VERSION}" "${ZIP}"
+            --notes "MobileShared ${VERSION}" \
+            --latest

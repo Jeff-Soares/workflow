@@ -1,6 +1,6 @@
 [versions]
 app-version-name = "0.7.2"
-shared-version-name = "0.1.1"
+shared-version-name = "0.0.1"
 
 android-compileSdk = "37"
 android-minSdk = "24"

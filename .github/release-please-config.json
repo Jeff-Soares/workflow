@@ -6,7 +6,7 @@
       "extra-files": [
         {
           "type": "toml",
-          "path": "gradle/libs.versions.toml",
+          "path": "/gradle/libs.versions.toml",
           "jsonpath": "$.versions.app-version-name"
         }
       ]
@@ -15,7 +15,6 @@
       "release-type": "simple",
       "component": "shared",
       "include-component-in-tag": true,
-      "force-tag-creation": true,
       "extra-files": [
         {
           "type": "toml",
