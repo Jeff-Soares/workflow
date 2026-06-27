@@ -10,18 +10,6 @@
           "jsonpath": "$.versions.app-version-name"
         }
       ]
-    },
-    "shared": {
-      "release-type": "simple",
-      "component": "shared",
-      "include-component-in-tag": true,
-      "extra-files": [
-        {
-          "type": "toml",
-          "path": "/gradle/libs.versions.toml",
-          "jsonpath": "$.versions.shared-version-name"
-        }
-      ]
     }
   },
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
