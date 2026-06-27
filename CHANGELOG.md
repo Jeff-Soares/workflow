@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.0](https://github.com/Jeff-Soares/workflow/compare/v0.7.2...v0.8.0) (2026-06-27)
+
+
+### Features
+
+* test minor release app ([#20](https://github.com/Jeff-Soares/workflow/issues/20)) ([5140682](https://github.com/Jeff-Soares/workflow/commit/51406823e2f3674f96a15e165c20985fa0a4031d))
+
+
+### Bug Fixes
+
+* test patch release shared ([#21](https://github.com/Jeff-Soares/workflow/issues/21)) ([06a7b5d](https://github.com/Jeff-Soares/workflow/commit/06a7b5d323440cd381102efadc4ec448b7729685))
+
 ## [0.7.2](https://github.com/Jeff-Soares/workflow/compare/v0.7.1...v0.7.2) (2026-06-26)
 
 
