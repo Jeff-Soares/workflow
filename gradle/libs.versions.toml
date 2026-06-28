@@ -1,5 +1,5 @@
 [versions]
-app-version-name = "0.9.0"
+app-version-name = "0.9.1"
 shared-version-name = "0.1.0"
 
 android-compileSdk = "37"
