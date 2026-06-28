@@ -67,10 +67,11 @@ jobs:
           path: mobile-shared
 
       - name: Generate Package.swift
-        env:
-          VERSION: ${{ steps.ver.outputs.version }}
-          CHECKSUM: ${{ steps.pkg.outputs.checksum }}
-        run: bash .github/scripts/generate-package-swift.sh mobile-shared/Package.swift
+        uses: ./.github/actions/generate-package-swift
+        with:
+          version: ${{ steps.ver.outputs.version }}
+          checksum: ${{ steps.pkg.outputs.checksum }}
+          output-path: mobile-shared/Package.swift
 
       - name: Commit, tag & release mobile-shared
         working-directory: mobile-shared

@@ -1,0 +1,54 @@
+name: Generate Package.swift
+description: Generates Package.swift for MobileShared XCFramework release
+
+inputs:
+  version:
+    description: 'Release version to embed in the binaryTarget URL (e.g. 0.0.2)'
+    required: true
+  checksum:
+    description: 'SHA-256 checksum of the XCframework zip artifact, produced by `swift package compute-checksum`'
+    required: true
+  output-path:
+    description: 'File path where the generated Package.swift will be written'
+    required: true
+  artifact-base-url:
+    description: 'Base URL where the XCFramework zip is hosted. The final asset URL is {artifact-base-url}/MobileShared-{version}.xcframework.zip'
+    required: false
+    default: https://android-s3-tests.s3.sa-east-1.amazonaws.com
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        CHECKSUM: ${{ inputs.checksum }}
+        OUT: ${{ inputs.output-path }}
+        ARTIFACT_BASE_URL: ${{ inputs.artifact-base-url }}
+      run: |
+        URL="${ARTIFACT_BASE_URL}/MobileShared-${VERSION}.xcframework.zip"
+
+        cat > "$OUT" <<SWIFT_EOF
+        // swift-tools-version:6.1
+        import PackageDescription
+
+        let package = Package(
+            name: "MobileShared",
+            platforms: [
+                .iOS(.v14)
+            ],
+            products: [
+                .library(
+                    name: "MobileShared",
+                    targets: ["MobileShared"]
+                )
+            ],
+            targets: [
+                .binaryTarget(
+                    name: "MobileShared",
+                    url: "${URL}",
+                    checksum: "${CHECKSUM}"
+                )
+            ]
+        )
+        SWIFT_EOF
