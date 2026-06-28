@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.2](https://github.com/Jeff-Soares/workflow/compare/v0.9.1...v0.9.2) (2026-06-28)
+
+
+### Bug Fixes
+
+* test shared release ([6f56870](https://github.com/Jeff-Soares/workflow/commit/6f56870cd3f9b3c4ab482232e1c1cf6d132d4c07))
+
 ## [0.9.1](https://github.com/Jeff-Soares/workflow/compare/v0.9.0...v0.9.1) (2026-06-28)
 
 
