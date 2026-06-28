@@ -6,7 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -18,13 +21,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.jx.workflow.ui.theme.WorkflowTheme
 import com.workflow.shared.App
+import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +50,22 @@ fun WorkflowScreen(modifier: Modifier = Modifier) {
             .semantics { testTagsAsResourceId = true },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        App()
+        val brush = Brush.linearGradient(
+            colors = List(2) {
+                Color(
+                    red = Random.nextFloat(),
+                    green = Random.nextFloat(),
+                    blue = Random.nextFloat(),
+                    alpha = 0.5f
+                )
+            }
+        )
+
+        App(
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .background(brush, RoundedCornerShape(32.dp), alpha = .2f)
+        )
 
         var name by remember { mutableStateOf("") }
         var greeting by remember { mutableStateOf("") }
